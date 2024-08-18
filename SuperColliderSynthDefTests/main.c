@@ -91,7 +91,10 @@ void testStack(void) {
 int main(int argc, const char * argv[]) {
 
     const char *synthCode = ""
-        "return Out(Control(\"out\", 1), SinOsc(440), SinOsc(220, 0.3))";
+        "outControl = Control(\"out\", 1)"
+        "osc1 = SinOsc(440)"
+        "osc2 = SinOsc{freq=220, phase=0.5}"
+        "return Out(outControl, osc1, osc2)";
     SynthDef *def1 = newSynthDef();
     parse_lua_synthdef(synthCode, "boop", def1);
     
