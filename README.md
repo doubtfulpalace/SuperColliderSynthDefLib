@@ -18,8 +18,8 @@ The many things remaining to be done include:
 - Multichannel expansion
 - Reassignment of node values
 - Error handling
-- Defining the full suite of unit generators and math operators
-- Optimization of SynthDef graphs (e.g. removing redundant constants, controls, and UGens
+- Defining the full suite of unit generators
+- Optimization of SynthDef graphs (e.g. removing redundant constants, controls, and UGens)
 
 Code review and language design input from interested and knowledgable parties is very welcome.
 
