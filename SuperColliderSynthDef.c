@@ -105,24 +105,25 @@ int readSynthDefWireSpec(WireSpec *wireSpec, uint8_t *data) {
     return counter;
 }
 
-int writeSynthDefRate(SynthDefRate rate, uint8_t *data) {
+int writeSynthDefRate(uint32_t rate, uint8_t *data) {
     *data = (uint8_t)rate;
     return 1;
 }
 
-int readSynthDefRate(SynthDefRate *rate, uint8_t *data) {
+int readSynthDefRate(uint32_t *rate, uint8_t *data) {
     uint8_t rawRate = *data;
-    int intRate = (int)rawRate;
-    switch(intRate) {
-        case SynthDefRate_SCALAR:
-        case SynthDefRate_CONTROL:
-        case SynthDefRate_AUDIO:
-        case SynthDefRate_DEMAND:
-            *rate = intRate;
-            break;
-        default:
-            *rate = SynthDefRate_CONTROL;
-    }
+    *rate = rawRate;
+//    int intRate = (int)rawRate;
+//    switch(intRate) {
+//        case SynthDefRate_SCALAR:
+//        case SynthDefRate_CONTROL:
+//        case SynthDefRate_AUDIO:
+//        case SynthDefRate_DEMAND:
+//            *rate = intRate;
+//            break;
+//        default:
+//            *rate = SynthDefRate_CONTROL;
+//    }
     return 1;
 }
 
@@ -192,7 +193,7 @@ int readSynthDefUGen(UGen *ugen, uint8_t *data, SynthDefError *error) {
     for (int i = 0; i < ugen->numInputs; i++) {
         counter += readSynthDefWireSpec(&ugen->inputs[i], data + counter);
     }
-    ugen->outputRates = (SynthDefRate *)malloc(ugen->numOutputs * sizeof(SynthDefRate));
+    ugen->outputRates = (uint32_t*)malloc(ugen->numOutputs * sizeof(uint32_t));
     for (int i = 0; i < ugen->numOutputs; i++) {
         counter += readSynthDefRate(&ugen->outputRates[i], data + counter);
     }

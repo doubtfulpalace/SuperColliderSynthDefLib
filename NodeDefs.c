@@ -17,7 +17,7 @@ static int FUNC_NAME(lua_State *L) {\
     return newNode(L, NAME, RATE, IS_CONTROL, NUM_INPUTS, inputNames, defaultInputValues, NUM_OUTPUTS, outputRates, SPECIAL_INDEX);\
 }\
 
-NODEFUNC(SinOsc, "SinOsc", 2, false, 2, {"freq" COMMA "phase"}, {220 COMMA 0.5}, 1, {2}, 0);
+NODEFUNC(SinOsc, "SinOsc", 2, false, 2, {"freq" COMMA "phase"}, {220 COMMA 0.0}, 1, {2}, 0);
 NODEFUNC(Control, "Control", 1, true, 0, {}, {}, 1, {1}, 0);
 NODEFUNC(Out, "Out", 2, false, 3, {"out" COMMA "left" COMMA "right"}, {0.6 COMMA 0.6 COMMA 0.6}, 0, {}, 0);
 

@@ -13,32 +13,20 @@
 #include "Diagnostics.h"
 
 SynthDefFileRep *readSynthDefFile(char *path) {
-    /* declare a file pointer */
-    FILE    *infile;
+    FILE *infile;
     uint8_t *buffer;
-    long    numbytes;
+    long numbytes;
      
-    /* open an existing file for reading */
     infile = fopen(path, "r");
-     
-    /* quit if the file does not exist */
     if (infile == NULL) {
         return NULL;
     }
     
-    /* Get the number of bytes */
     fseek(infile, 0L, SEEK_END);
     numbytes = ftell(infile);
-     
-    /* reset the file position indicator to
-    the beginning of the file */
     fseek(infile, 0L, SEEK_SET);
      
-    /* grab sufficient memory for the
-    buffer to hold the text */
     buffer = (uint8_t*)calloc(numbytes, sizeof(char));
-     
-    /* memory error */
     if (buffer == NULL) {
         return NULL;
     }
@@ -91,12 +79,11 @@ void testStack(void) {
 int main(int argc, const char * argv[]) {
 
     const char *synthCode = ""
-        "outControl = Control(\"out\", 1)"
-        "osc1 = SinOsc(440)"
-        "osc2 = SinOsc{freq=220, phase=0.5}"
-        "return Out(outControl, osc1, osc2)";
+        "controls = { Control(\"out\", 0), Control(\"freq\", 440) }"
+        "osc1 = SinOsc(controls[2])"
+        "return Out(controls[1], osc1, osc1)";
     SynthDef *def1 = newSynthDef();
-    parse_lua_synthdef(synthCode, "boop", def1);
+    parse_lua_synthdef(synthCode, "swifter2", def1);
     
     dumpSynthDef(stdout, *def1);
     
@@ -115,10 +102,7 @@ int main(int argc, const char * argv[]) {
     memcpy(fileData, buffer, dataSize);
     free(buffer);
     
-    /* declare a file pointer */
-    FILE    *outfile;
-     
-    /* open an existing file for reading */
+    FILE *outfile;
     char *path = "/Users/timwalters/Library/Application Support/SuperCollider/synthdefs/scsdt.scsyndef";
     outfile = fopen(path, "w");
          
@@ -127,7 +111,7 @@ int main(int argc, const char * argv[]) {
     freeSynthDef(def1);
     free(fileData);
 
-    SynthDefFileRep *fileRep2 = readSynthDefFile("/Users/timwalters/Library/Application Support/SuperCollider/synthdefs/scsdt.scsyndef");
+    SynthDefFileRep *fileRep2 = readSynthDefFile("/Users/timwalters/Library/Application Support/SuperCollider/synthdefs/swifter2.scsyndef");
     if (fileRep2 == NULL) {
         return 1;
     }

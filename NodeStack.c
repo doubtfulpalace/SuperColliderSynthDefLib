@@ -106,35 +106,48 @@ void parseSynthDefStack(lua_State *L, const char *name, NodeSpecStack *stack, Sy
         pushNodeSpec(stash, spec);
     }
     
-    def->numUGens = numUGens;
+    int totalUGens = numUGens + (numControls > 0 ? 1 : 0);
+    def->numUGens = totalUGens;
     lua_Integer ugenIDs[numUGens];
-    UGen *ugens = (UGen*)malloc(sizeof(UGen) * numUGens);
+    UGen *ugens = (UGen*)malloc(sizeof(UGen) * totalUGens);
     SynthNodeSpec *specs[numUGens];
+    
+    // make composite control
+    ugens[0].name = "Control";
+    ugens[0].numInputs = 0;
+    ugens[0].numOutputs = numControls;
+    ugens[0].outputRates = (uint32_t*)malloc(sizeof(uint32_t) * ugens[0].numOutputs);
+    for (int i = 0; i < ugens[0].numOutputs; i++) {
+        ugens[0].outputRates[i] = 1; // for now!
+    }
+    ugens[0].rate = 1;
+    ugens[0].specialIndex = 0;
+    
     // get everything but inputs, and populate the cross-references
-    for (int i = 0; i < numUGens; i++) {
+    for (int i = 1; i < totalUGens; i++) {
         SynthNodeSpec *spec = popNodeSpec(ugenStack);
-        ugenIDs[i] = spec->id;
-        specs[i] = spec;
+        ugenIDs[i-1] = spec->id;
+        specs[i-1] = spec;
         ugens[i].name = (char*)malloc(sizeof(spec->name));
         strcpy(ugens[i].name, spec->name);
         ugens[i].numInputs = spec->numInputs;
         ugens[i].numOutputs = spec->numOutputs;
-        SynthDefRate rates[spec->numOutputs];
-        ugens[i].outputRates = rates;
+        ugens[i].outputRates = (uint32_t*)malloc(sizeof(uint32_t) * ugens[i].numOutputs);
         for (int j = 0; j < spec->numOutputs; j++) {
-            ugens[i].outputRates[i] = spec->outputRates[i];
+            ugens[i].outputRates[j] = spec->outputRates[j];
         }
         ugens[i].rate = spec->rate;
         ugens[i].specialIndex = spec->specialIndex;
+        pushNodeSpec(stash, spec);
     }
     // now get the inputs
-    for (int i = 0; i < numUGens; i++) {
+    for (int i = 1; i < totalUGens; i++) {
         uint32_t channel = 0; // for now!
         ugens[i].inputs = (WireSpec *)malloc(sizeof(WireSpec) * ugens[i].numInputs);
         for (int j = 0; j < ugens[i].numInputs; j++) {
             bool found = false;
             for (int k = 0; k < numConstants; k++) {
-                if (specs[i]->inputIDs[j] == constantIDs[k]) {
+                if (specs[i-1]->inputIDs[j] == constantIDs[k]) {
                     ugens[i].inputs[j].index = -1;
                     ugens[i].inputs[j].channel = k;
                     found = true;
@@ -143,9 +156,9 @@ void parseSynthDefStack(lua_State *L, const char *name, NodeSpecStack *stack, Sy
             }
             if (!found) {
                 for (int k = 0; k < numControls; k++) {
-                    if (specs[i]->inputIDs[j] == controlIDs[k]) {
-                        ugens[i].inputs[j].index = k;
-                        ugens[i].inputs[j].channel = channel;
+                    if (specs[i-1]->inputIDs[j] == controlIDs[k]) {
+                        ugens[i].inputs[j].index = 0;
+                        ugens[i].inputs[j].channel = k;
                         found = true;
                         break;
                     }
@@ -153,8 +166,8 @@ void parseSynthDefStack(lua_State *L, const char *name, NodeSpecStack *stack, Sy
             }
             if (!found) {
                 for (int k = 0; k < numUGens; k++) {
-                    if (specs[i]->inputIDs[j] == ugenIDs[k]) {
-                        ugens[i].inputs[j].index = k + numControls;
+                    if (specs[i-1]->inputIDs[j] == ugenIDs[k]) {
+                        ugens[i].inputs[j].index = k + 1;
                         ugens[i].inputs[j].channel = channel;
                         found = true;
                         break;
@@ -166,9 +179,9 @@ void parseSynthDefStack(lua_State *L, const char *name, NodeSpecStack *stack, Sy
             }
         }
     }
-    for (int i = 0; i < numUGens; i++) {
-        pushNodeSpec(stash, specs[i]);
-    }
+//    for (int i = 0; i < numUGens; i++) {
+//        pushNodeSpec(stash, specs[i]);
+//    }
     def->ugens = ugens;
     // may never support this in Lua
     def->numVariants = 0;

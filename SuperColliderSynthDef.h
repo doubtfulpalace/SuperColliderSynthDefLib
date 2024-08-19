@@ -45,12 +45,12 @@ typedef struct Variant {
     float *values;
 } Variant;
 
-typedef enum SynthDefRate {
-    SynthDefRate_SCALAR = 0,
-    SynthDefRate_CONTROL = 1,
-    SynthDefRate_AUDIO = 2,
-    SynthDefRate_DEMAND = 3
-} SynthDefRate;
+//typedef enum SynthDefRate {
+//    SynthDefRate_SCALAR = 0,
+//    SynthDefRate_CONTROL = 1,
+//    SynthDefRate_AUDIO = 2,
+//    SynthDefRate_DEMAND = 3
+//} SynthDefRate;
 
 typedef enum SynthDefError {
     SynthDefError_NONE = 0,
@@ -62,8 +62,8 @@ typedef struct UGen {
     uint32_t numInputs;
     WireSpec *inputs;
     uint32_t numOutputs;
-    SynthDefRate *outputRates;
-    SynthDefRate rate;
+    uint32_t *outputRates;
+    uint32_t rate;
     uint16_t specialIndex;
 } UGen;
 

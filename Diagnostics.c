@@ -55,10 +55,15 @@ void dumpTable(lua_State *L, char *label) {
  
 void dumpUGen(FILE *file, const UGen ugen, int level) {
     indent(file, level);
-    fprintf(file, "%s rate: %d inputs: ", ugen.name, ugen.rate);
+    fprintf(file, "%s (rate %d) inputs: ", ugen.name, ugen.rate);
     for(int i = 0; i < ugen.numInputs; i++) {
         fprintf(file, "[%d,%d] ", ugen.inputs[i].index, ugen.inputs[i].channel);
     }
+    fprintf(file, "outputs: [");
+    for (int i = 0; i < ugen.numOutputs; i++) {
+        fprintf(file, "%d ", ugen.outputRates[i]);
+    }
+    fprintf(file, "], specialIndex: %d", ugen.specialIndex);
     fprintf(file, "\n");
 }
 
@@ -74,12 +79,12 @@ void dumpSynthDef(FILE *file, const SynthDef def) {
         fprintf(file, "%f ", def.controlValues[i]);
     }
     fprintf(file, "\n");
-    fprintf(file, "  Controls: ");
+    fprintf(file, "  Controls (%d): ", def.numControls);
     for (int i = 0; i < def.numControls; i++) {
         fprintf(file, "[%s %d] ", def.controls[i].name, def.controls[i].index);
     }
     fprintf(file, "\n");
-    fprintf(file, "  UGens:\n");
+    fprintf(file, "  UGens (%d):\n", def.numUGens);
     for (int i = 0; i < def.numUGens; i++) {
         fprintf(file, "    %d ", i + def.numControls);
         dumpUGen(file, def.ugens[i], 0);

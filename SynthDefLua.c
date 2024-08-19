@@ -66,7 +66,7 @@ static void newConstantNode(lua_State *L, SynthNodeSpec *node, lua_Number value)
 
 static void newProtoNode(lua_State *L, SynthNodeSpec *node, const char *name, lua_Integer rate,
                          bool isControl, lua_Integer numInputs, const char **inputNames,
-                         lua_Integer numOutputs, lua_Integer *outputRates,lua_Integer specialIndex)
+                         lua_Integer numOutputs, lua_Integer *outputRates, lua_Integer specialIndex)
 {
     UniqueIDSource *idSource = getIDSource(L);
     lua_Integer id = nextUniqueID(idSource);
