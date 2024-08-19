@@ -7,10 +7,9 @@ Clients can use the `UGen` and `SynthDef` struct to author synthdefs in a "close
 as a DSL, for example:
 
 ```
-outControl = Control("out", 1)
-osc1 = SinOsc(440)
-osc2 = SinOsc{freq=220, phase=0.5}
-return Out(outControl, osc1, osc2)
+controls = { Control("out", 0), Control("freq", 440) }
+osc1 = SinOsc(controls[2])
+return Out(controls[1], osc1, osc1)
 ```
 
 Calling `parse_lua_synthdef` with this code turns it into a `SynthDef` struct, ready for conversion to data and transmission via OSC to `scsynth`.
