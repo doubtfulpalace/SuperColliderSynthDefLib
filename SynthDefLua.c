@@ -168,5 +168,6 @@ int newNode(lua_State *L, const char *name, lua_Integer rate, bool isControl, lu
         }
     }
     lua_pushlightuserdata(L, node);
+    luaL_setmetatable(L, "SCNodeDef");
     return 1;
 }

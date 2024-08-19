@@ -38,6 +38,11 @@ void parse_lua_synthdef(const char *luacode, const char* defName, SynthDef *def)
     UniqueIDSource *idSource = newUniqueIDSource();
 
     lua_State *L = luaL_newstate();
+	luaopen_base(L);             /* opens the basic library */
+	luaopen_table(L);            /* opens the table library */
+	luaopen_io(L);               /* opens the I/O library */
+	luaopen_string(L);           /* opens the string lib. */
+	luaopen_math(L);             /* opens the math lib. */
     luaL_openlibs(L);
     luaL_registerNodeDefs(L);
 
