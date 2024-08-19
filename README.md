@@ -7,8 +7,8 @@ Clients can use the `UGen` and `SynthDef` struct to author synthdefs in a "close
 as a DSL, for example:
 
 ```
-controls = { Control("out", 0), Control("freq", 440) }
-osc1 = SinOsc(controls[2])
+controls = { Control("out", 0), Control("freq", 440), Control("amp", 0.125) }
+osc1 = Mul(SinOsc(controls[2]), controls[3])
 return Out(controls[1], osc1, osc1)
 ```
 
@@ -16,8 +16,9 @@ Calling `parse_lua_synthdef` with this code turns it into a `SynthDef` struct, r
 
 The many things remaining to be done include:
 - Multichannel expansion
-- Special operators such as `*` and `+`, which will require entries in the Lua functions' metatable
-- Reassignment of node values, which (I think) will require Lua uservalues to be added to the functions
+- Special operators such as `*` and `+`
+- Reassignment of node values
+- Error handling
 - Defining the full suite of unit generators
 - Optimization of SynthDef graphs (e.g. removing redundant constants, controls, and UGens
 

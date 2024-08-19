@@ -53,34 +53,11 @@ void testlua(lua_State *L, const char *resultKey) {
     printf("Result: %.6f\n", result);
 }
 
-void testLuaSynthDef(lua_State *L, const char *resultKey) {
-    lua_getglobal(L, resultKey);
-    SynthNodeSpec *node = (SynthNodeSpec*)lua_touserdata(L, -1);
-    dumpSynthNodeSpec(stdout, *node);
-}
-
-void testStack(void) {
-    int size = 10;
-    NodeSpecStack *stack = (NodeSpecStack*)malloc(sizeof(NodeSpecStack));
-    for (int i = 0; i < size; i++) {
-        SynthNodeSpec *spec = (SynthNodeSpec*)malloc(sizeof(SynthNodeSpec));
-        spec->id = i;
-        pushNodeSpec(stack, spec);
-    }
-    for (int i = 0; i < size; i++) {
-        SynthNodeSpec *spec = popNodeSpec(stack);
-        printf("%d, ", spec->id);
-        freeSynthNodeSpec(spec);
-    }
-    free(stack);
-    printf("\n");
-}
-
 int main(int argc, const char * argv[]) {
 
     const char *synthCode = ""
-        "controls = { Control(\"out\", 0), Control(\"freq\", 440) }"
-        "osc1 = SinOsc(controls[2])"
+        "controls = { Control(\"out\", 0), Control(\"freq\", 440), Control(\"amp\", 0.125) }"
+        "osc1 = Mul(SinOsc(controls[2]), controls[3])"
         "return Out(controls[1], osc1, osc1)";
     SynthDef *def1 = newSynthDef();
     parse_lua_synthdef(synthCode, "swifter2", def1);

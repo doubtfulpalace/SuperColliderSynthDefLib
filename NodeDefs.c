@@ -20,11 +20,13 @@ static int FUNC_NAME(lua_State *L) {\
 NODEFUNC(SinOsc, "SinOsc", 2, false, 2, {"freq" COMMA "phase"}, {220 COMMA 0.0}, 1, {2}, 0);
 NODEFUNC(Control, "Control", 1, true, 0, {}, {}, 1, {1}, 0);
 NODEFUNC(Out, "Out", 2, false, 3, {"out" COMMA "left" COMMA "right"}, {0.6 COMMA 0.6 COMMA 0.6}, 0, {}, 0);
+NODEFUNC(Mul, "BinaryOpUGen", 2, false, 2, {"a" COMMA "b"}, {1 COMMA 1}, 1, {2}, 2);
 
 static const struct luaL_Reg nodeSpecs[] = {
     {"SinOsc", SinOsc},
     {"Control", Control},
     {"Out", Out},
+    {"Mul", Mul},
     {NULL, NULL}  /* sentinel */
 };
 
