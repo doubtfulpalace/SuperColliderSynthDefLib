@@ -12,7 +12,6 @@
 
 void dumpStack(lua_State *L, char *label);
 void dumpTable(lua_State *L, char *label);
-void dumpRegistry(lua_State *L);
 void dumpSynthNodeSpec(FILE *file, SynthNodeSpec node);
 void dumpSynthDef(FILE *file, const SynthDef def);
 
