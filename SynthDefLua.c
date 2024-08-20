@@ -38,6 +38,29 @@ SynthNodeSpec *newSynthNodeSpec(void) {
     return (SynthNodeSpec *)malloc(sizeof(SynthNodeSpec));
 }
 
+uint64_t nodeHash(SynthNodeSpec spec) {
+	uint64_t hash = 0;
+	for (int i = 0; i < strlen(spec.name); i++) {
+		hash += (uint8_t)spec.name[i];
+	}
+	if (spec.isConstant) {
+		union {
+			lua_Number floatValue;
+			lua_Integer intValue;
+		} converter;
+		converter.floatValue = spec.numberValue;
+		hash += converter.intValue;
+	}
+	else if (spec.isControl) {
+		for(int i = 0; i < strlen(spec.controlName); i++) {
+			hash += (uint8_t)spec.controlName[i];
+		}
+	} else {
+		
+	}
+	return hash;
+}
+
 void freeSynthNodeSpec(SynthNodeSpec *spec) {
     free(spec->inputNames);
     free(spec->inputIDs);
@@ -93,6 +116,10 @@ static void newProtoNode(lua_State *L, SynthNodeSpec *node, const char *name, lu
 static void normalizeNodeInput(lua_State *L, lua_Integer *inputID, int index) {
     if (lua_isuserdata(L, index)) {
         SynthNodeSpec *node = (SynthNodeSpec*)lua_touserdata(L, index);
+//    lua_pushstring(L, NODE_STACK_KEY);
+//    lua_pushlightuserdata(L, stack);
+//    lua_settable(L, LUA_REGISTRYINDEX);
+
         *inputID = node->id;
     } else {
         SynthNodeSpec *newNode = newSynthNodeSpec();
