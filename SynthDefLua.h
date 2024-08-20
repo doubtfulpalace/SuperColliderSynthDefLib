@@ -48,7 +48,11 @@ typedef struct SynthNodeSpec {
     lua_Integer specialIndex;
 } SynthNodeSpec;
 
-uint64_t nodeHash(SynthNodeSpec spec);
+typedef struct NodeHash {
+    char hash[256];
+} NodeHash;
+
+NodeHash nodeHash(SynthNodeSpec spec);
 
 void freeSynthNodeSpec(SynthNodeSpec *spec);
 int newNode(lua_State *L, const char *name, lua_Integer rate, bool isControl, lua_Integer numInputs,

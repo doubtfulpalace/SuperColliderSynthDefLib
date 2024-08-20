@@ -57,9 +57,10 @@ int main(int argc, const char * argv[]) {
     const char *synthCode = ""
         "controls = { Control(\"out\", 0), Control(\"freq\", 440), Control(\"amp\", 0.125) }"
         "osc1 = SinOsc(controls[2]) * controls[3]"
-        "return Out(controls[1], osc1, osc1)";
+        "osc2 = SinOsc(controls[2]) * controls[3]"
+        "return Out(controls[1], osc1, osc2)";
     SynthDef *def1 = newSynthDef();
-    parse_lua_synthdef(synthCode, "ouch", def1);
+    parse_lua_synthdef(synthCode, "swifter2", def1);
     
     dumpSynthDef(stdout, *def1);
     

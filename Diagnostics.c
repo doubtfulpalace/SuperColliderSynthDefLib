@@ -52,7 +52,28 @@ void dumpTable(lua_State *L, char *label) {
     lua_pop(L, 1);
     }
 }
- 
+
+void dumpRegistry(lua_State *L) {
+    lua_pushnil(L);  /* first key */
+    while (lua_next(L, LUA_REGISTRYINDEX) != 0) {
+    /* uses 'key' (at index -2) and 'value' (at index -1) */
+    if (lua_isstring(L, -2)) {
+        printf("Key: (%s, %s)", lua_typename(L, lua_type(L, -2)), lua_tostring(L, -2));
+    } else {
+        printf("Key: (%s, %f)", lua_typename(L, lua_type(L, -2)), lua_tonumber(L, -2));
+    }
+    printf("; ");
+    if (lua_isstring(L, -1)) {
+        printf("Value: (%s, %s)", lua_typename(L, lua_type(L, -1)), lua_tostring(L, -1));
+    } else {
+        printf("Value: (%s, %f)", lua_typename(L, lua_type(L, -1)), lua_tonumber(L, -1));
+    }
+    printf("\n");
+    /* removes 'value'; keeps 'key' for next iteration */
+    lua_pop(L, 1);
+    }
+}
+
 void dumpUGen(FILE *file, const UGen ugen, int level) {
     indent(file, level);
     fprintf(file, "%s (rate %d) inputs: ", ugen.name, ugen.rate);
