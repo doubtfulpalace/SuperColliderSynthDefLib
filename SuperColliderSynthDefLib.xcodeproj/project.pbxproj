@@ -82,6 +82,7 @@
 		88FAE0202C6FED8A0019E5C5 /* NodeStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 88FAE01D2C6FED8A0019E5C5 /* NodeStack.h */; };
 		88FAE0232C7034410019E5C5 /* NodeDefs.c in Sources */ = {isa = PBXBuildFile; fileRef = 88FAE0222C7034410019E5C5 /* NodeDefs.c */; };
 		88FAE0242C7034410019E5C5 /* NodeDefs.h in Headers */ = {isa = PBXBuildFile; fileRef = 88FAE0212C7034410019E5C5 /* NodeDefs.h */; };
+		88FCD6842C8BCCE600B0F1FE /* NodeDefsFromSC.c in Sources */ = {isa = PBXBuildFile; fileRef = 88FCD6832C8BCCE600B0F1FE /* NodeDefsFromSC.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -175,6 +176,8 @@
 		88FAE0212C7034410019E5C5 /* NodeDefs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NodeDefs.h; sourceTree = "<group>"; };
 		88FAE0222C7034410019E5C5 /* NodeDefs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = NodeDefs.c; sourceTree = "<group>"; };
 		88FAE0252C73143B0019E5C5 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		88FCD6832C8BCCE600B0F1FE /* NodeDefsFromSC.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NodeDefsFromSC.c; sourceTree = "<group>"; };
+		88FCD6852C8D1DE900B0F1FE /* NodeDefsFromSC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NodeDefsFromSC.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -199,6 +202,8 @@
 		88FADF2B2C6ABE200019E5C5 = {
 			isa = PBXGroup;
 			children = (
+				88FCD6852C8D1DE900B0F1FE /* NodeDefsFromSC.h */,
+				88FCD6832C8BCCE600B0F1FE /* NodeDefsFromSC.c */,
 				88FAE0252C73143B0019E5C5 /* README.md */,
 				88FAE0212C7034410019E5C5 /* NodeDefs.h */,
 				88FAE0222C7034410019E5C5 /* NodeDefs.c */,
@@ -473,6 +478,7 @@
 				88FADFF32C6D0FEC0019E5C5 /* lopcodes.c in Sources */,
 				88FADFE22C6D0FEC0019E5C5 /* ldump.c in Sources */,
 				88FAE00A2C6D0FEC0019E5C5 /* lundump.c in Sources */,
+				88FCD6842C8BCCE600B0F1FE /* NodeDefsFromSC.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

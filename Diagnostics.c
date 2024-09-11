@@ -68,7 +68,7 @@ void dumpUGen(FILE *file, const UGen ugen, int level) {
 }
 
 void dumpSynthDef(FILE *file, const SynthDef def) {
-    fprintf(file, "Synth/def %s\n", def.name);
+    fprintf(file, "SynthDef %s\n", def.name);
     fprintf(file, "  Constants: ");
     for (int i = 0; i < def.numConstants; i++) {
         fprintf(file, "%f ", def.constants[i]);
@@ -86,7 +86,7 @@ void dumpSynthDef(FILE *file, const SynthDef def) {
     fprintf(file, "\n");
     fprintf(file, "  UGens (%d):\n", def.numUGens);
     for (int i = 0; i < def.numUGens; i++) {
-        fprintf(file, "    %d ", i + def.numControls);
+        fprintf(file, "    %d ", i);
         dumpUGen(file, def.ugens[i], 0);
     }
 }

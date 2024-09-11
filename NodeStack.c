@@ -57,7 +57,6 @@ lua_Integer nextUniqueID(UniqueIDSource *idSource) {
 
 void parseSynthDefStack(lua_State *L, const char *name, NodeSpecStack *stack, SynthDef *def) {
     NodeSpecStack *constantStack = newNodeSpecStack();
-    NodeSpecStack *controlStack = newNodeSpecStack();
     NodeSpecStack *ugenStack = newNodeSpecStack();
     NodeSpecStack *stash = newNodeSpecStack();
     uint32_t numConstants = 0;
@@ -69,10 +68,10 @@ void parseSynthDefStack(lua_State *L, const char *name, NodeSpecStack *stack, Sy
         if (spec->isConstant) {
             pushNodeSpec(constantStack, spec);
             numConstants++;
-        } else if (spec->isControl) {
-            pushNodeSpec(controlStack, spec);
-            numControls++;
         } else {
+			if (spec->isControl) {
+				numControls++;
+			}
             pushNodeSpec(ugenStack, spec);
             numUGens++;
         }
@@ -96,38 +95,17 @@ void parseSynthDefStack(lua_State *L, const char *name, NodeSpecStack *stack, Sy
     def->controls = (ControlSpec*)malloc(sizeof(ControlSpec) * numControls);
     def->controlValues = (float*)malloc(sizeof(float) * numControls);
     lua_Integer controlIDs[numControls];
-    for (int i = 0; i < numControls; i++) {
-        SynthNodeSpec *spec = popNodeSpec(controlStack);
-        controlIDs[i] = spec->id;
-        def->controlValues[i] = spec->numberValue;
-        def->controls[i].name = (char*)malloc(sizeof(spec->controlName));
-        strcpy(def->controls[i].name, spec->controlName);
-        def->controls[i].index = i;
-        pushNodeSpec(stash, spec);
-    }
-    
-    int totalUGens = numUGens + (numControls > 0 ? 1 : 0);
-    def->numUGens = totalUGens;
+    def->numUGens = numUGens;
     lua_Integer ugenIDs[numUGens];
-    UGen *ugens = (UGen*)malloc(sizeof(UGen) * totalUGens);
+    UGen *ugens = (UGen*)malloc(sizeof(UGen) * numUGens);
     SynthNodeSpec *specs[numUGens];
-    
-    // make composite control
-    ugens[0].name = "Control";
-    ugens[0].numInputs = 0;
-    ugens[0].numOutputs = numControls;
-    ugens[0].outputRates = (uint32_t*)malloc(sizeof(uint32_t) * ugens[0].numOutputs);
-    for (int i = 0; i < ugens[0].numOutputs; i++) {
-        ugens[0].outputRates[i] = 1; // for now!
-    }
-    ugens[0].rate = 1;
-    ugens[0].specialIndex = 0;
-    
+	
     // get everything but inputs, and populate the cross-references
-    for (int i = 1; i < totalUGens; i++) {
+	int controlCounter = 0;
+    for (int i = 0; i < numUGens; i++) {
         SynthNodeSpec *spec = popNodeSpec(ugenStack);
-        ugenIDs[i-1] = spec->id;
-        specs[i-1] = spec;
+        ugenIDs[i] = spec->id;
+        specs[i] = spec;
         ugens[i].name = (char*)malloc(sizeof(spec->name));
         strcpy(ugens[i].name, spec->name);
         ugens[i].numInputs = spec->numInputs;
@@ -138,16 +116,24 @@ void parseSynthDefStack(lua_State *L, const char *name, NodeSpecStack *stack, Sy
         }
         ugens[i].rate = spec->rate;
         ugens[i].specialIndex = spec->specialIndex;
+        if (spec->isControl) {
+			controlIDs[controlCounter] = spec->id;
+			def->controlValues[controlCounter] = spec->numberValue;
+			def->controls[controlCounter].name = (char*)malloc(sizeof(spec->controlName));
+			strcpy(def->controls[controlCounter].name, spec->controlName);
+			def->controls[controlCounter].index = i;
+			controlCounter++;
+		}
         pushNodeSpec(stash, spec);
     }
     // now get the inputs
-    for (int i = 1; i < totalUGens; i++) {
+    for (int i = 0; i < numUGens; i++) {
         uint32_t channel = 0; // for now!
         ugens[i].inputs = (WireSpec *)malloc(sizeof(WireSpec) * ugens[i].numInputs);
         for (int j = 0; j < ugens[i].numInputs; j++) {
             bool found = false;
             for (int k = 0; k < numConstants; k++) {
-                if (specs[i-1]->inputIDs[j] == constantIDs[k]) {
+                if (specs[i]->inputIDs[j] == constantIDs[k]) {
                     ugens[i].inputs[j].index = -1;
                     ugens[i].inputs[j].channel = k;
                     found = true;
@@ -155,19 +141,9 @@ void parseSynthDefStack(lua_State *L, const char *name, NodeSpecStack *stack, Sy
                 }
             }
             if (!found) {
-                for (int k = 0; k < numControls; k++) {
-                    if (specs[i-1]->inputIDs[j] == controlIDs[k]) {
-                        ugens[i].inputs[j].index = 0;
-                        ugens[i].inputs[j].channel = k;
-                        found = true;
-                        break;
-                    }
-                }
-            }
-            if (!found) {
                 for (int k = 0; k < numUGens; k++) {
-                    if (specs[i-1]->inputIDs[j] == ugenIDs[k]) {
-                        ugens[i].inputs[j].index = k + 1;
+                    if (specs[i]->inputIDs[j] == ugenIDs[k]) {
+                        ugens[i].inputs[j].index = k;
                         ugens[i].inputs[j].channel = channel;
                         found = true;
                         break;
@@ -179,9 +155,6 @@ void parseSynthDefStack(lua_State *L, const char *name, NodeSpecStack *stack, Sy
             }
         }
     }
-//    for (int i = 0; i < numUGens; i++) {
-//        pushNodeSpec(stash, specs[i]);
-//    }
     def->ugens = ugens;
     // may never support this in Lua
     def->numVariants = 0;

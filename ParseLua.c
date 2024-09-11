@@ -15,6 +15,7 @@
 #include "SynthDefLua.h"
 #include "NodeStack.h"
 #include "NodeDefs.h"
+#include "NodeDefsFromSC.h"
 
 void error(lua_State *L, const char *fmt, ...) {
     va_list argp;
@@ -45,6 +46,7 @@ void parse_lua_synthdef(const char *luacode, const char* defName, SynthDef *def)
 	luaopen_math(L);             /* opens the math lib. */
     luaL_openlibs(L);
     luaL_registerNodeDefs(L);
+    luaL_registerNodeDefsFromSC(L);
 
     lua_pushstring(L, NODE_STACK_KEY);
     lua_pushlightuserdata(L, stack);
